@@ -46,46 +46,29 @@ function spin(){
 
 }
 
-$five = [];
-$total_hits = 0;
-$longest_run = 0;
-$total_run = 0;
-for($x = 0; $x < 1000; $x++)
+$hits = 0;
+$bet = 'red';
+$longest_left_swing = 0;
+$longest_right_swing = 0;
+$old_hit = 0;
+$pivot_point = 0;
+$old_trend = null;
+$trend = null;
+for($i = 0; $i < 10000; $i++)
 {
-    $hits = 0;
-    $run  = 0;
-    $longest_run = 0;
-    for($i = 0; $i < 100; $i++)
+    $number = spin();
+    if($number['color'] != 'green')
     {
-        $number = spin();
-        $five[] = $number;
-        if($i > 3)
-        {
-
-            if($number['color'] == 'black')
-                $run++;
-
-            if($run > $longest_run)
-                $longest_run = $run;
-
-            if($five[0] == $five[1] && $five[1] == $five[2] && $five[2] == $five[3] && $five[3] == $five[4] && $five[0] == 'black')
-            {
-                $hits++;
-                echo 'black' . "\n";
-            }
-            else
-            {
-                $run = 0;
-                echo $number['color'] . "\n";
-            }
-            array_shift($five);        
-        }
+        $old_hit = $hits;        
+        $hits += $number['color'] == $bet ? 1 : -1;        
     }
 
-    $total_run += $longest_run;
-    $total_hits += $hits;
+    if($hits > 0 && $hits > $longest_right_swing)
+        $longest_right_swing = $hits;
+    
+    if($hits < 0 && $hits < $longest_left_swing)
+        $longest_left_swing = $hits;        
 }
 
-
-echo 'Average hits ' . $total_hits/1000 . '/100' ."\n";
-echo 'Average longest run of black ' . $longest_run/1000 . "\n";
+echo 'Longest left swing: ' . $longest_left_swing . ', Longest right swing: ' . $longest_right_swing . ', Hits: ' . $hits . "\n";
+ 
